@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 import time
 
-load_from_disk = True
-if load_from_disk:
-    penval = np.load('penval.npy')
+load = True
+if load:
+    penval = np.load('setupObject.npy')
 
 cap = cv2.VideoCapture(0)
 
@@ -79,7 +79,7 @@ while(1):
     
     # If you're reading from memory then load the upper and lower ranges 
     # from there
-    if load_from_disk:
+    if load:
             lower_range = penval[0]
             upper_range = penval[1]
             

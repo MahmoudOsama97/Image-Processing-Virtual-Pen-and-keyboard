@@ -171,7 +171,7 @@ line_count = 0
 while True:
     _, frame = cap.read()
     # Resize and flip original frame
-    frame = cv2.resize(frame, (900,600))
+    frame = cv2.resize(frame, (1280,720))
     frame = cv2.flip(frame, 1) # This may not be necessary
     #frame = cv2.flip(frame, 0) # This may not be necessary
 
