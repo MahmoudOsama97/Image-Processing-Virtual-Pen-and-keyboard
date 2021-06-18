@@ -2,21 +2,16 @@ import cv2
 import numpy as np
 import time
 
-
-
-
 # NULL operation
 def NOP(x):
     pass
 def setup():
-    # Create CAM object
+    # Capture CAM object
     cap = cv2.VideoCapture(0)
-
-
-    # the window 
+    
     cv2.namedWindow("SETUP")
 
-    # Create 6 trackbars for the HSV ranges
+    #6 trackbars for HSV ranges
     cv2.createTrackbar("Lower - H", "SETUP", 0, 179, NOP)
     cv2.createTrackbar("Upper - H", "SETUP", 179, 179, NOP)
     cv2.createTrackbar("Lower - S", "SETUP", 0, 255, NOP)
@@ -24,58 +19,53 @@ def setup():
     cv2.createTrackbar("Lower - V", "SETUP", 0, 255, NOP)
     cv2.createTrackbar("Upper - V", "SETUP", 255, 255, NOP)
     
-    
     while True:
-        
-        # take frame from cam
+    
         r, frame = cap.read()
         if not r:
             break
-        # mirror the frame 
+        # flip the frame 
         frame = cv2.flip( frame, 1 ) 
         
-        #  BGR to HSV as we are using HSV system
+        # change BGR to HSV
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         
-        # take readings from the trackbars for hsv
-        lower_h = cv2.getTrackbarPos("Lower - H", "SETUP")
-        upper_h = cv2.getTrackbarPos("Upper - H", "SETUP")
-        lower_s = cv2.getTrackbarPos("Lower - S", "SETUP")
-        upper_s = cv2.getTrackbarPos("Upper - S", "SETUP")
-        lower_v = cv2.getTrackbarPos("Lower - V", "SETUP")
-        upper_v = cv2.getTrackbarPos("Upper - V", "SETUP")
+        #Readings from the trackbars 
+        lowerH = cv2.getTrackbarPos("Lower - H", "SETUP")
+        upperH = cv2.getTrackbarPos("Upper - H", "SETUP")
+        lowerS = cv2.getTrackbarPos("Lower - S", "SETUP")
+        upperS = cv2.getTrackbarPos("Upper - S", "SETUP")
+        lowerV = cv2.getTrackbarPos("Lower - V", "SETUP")
+        upperV = cv2.getTrackbarPos("Upper - V", "SETUP")
     
-        # define the mask ranges 
-        l_r = np.array([lower_h, lower_s, lower_v])
-        u_r = np.array([upper_h, upper_s, upper_v])
+        # mask ranges 
+        l_r = np.array([lowerH, lowerS, lowerV])
+        u_r = np.array([upperH, upperS, upperV])
         
-        # use the ranges to define the mask
+        #using lower and upper range to define mask
         mask = cv2.inRange(hsv, l_r, u_r)
     
         # apply the mask
         res = cv2.bitwise_and(frame, frame, mask=mask)
         
-        # put the two frames together
+        # stack the two frames together
         stacked = np.hstack((frame,res))
         
-        # show the frames
         cv2.imshow('SETUP',cv2.resize(stacked,None,fx=0.8,fy=0.8))
         
-        # break if ESC
+        #if ESC is pushed then break
         key = cv2.waitKey(1)
         if key == 27:
             break
         
-        # save if s
+        # if 's' is pushed then save
         if key == ord('s'):
             
-            thearray = [[lower_h,lower_s,lower_v],[upper_h, upper_s,upper_v]]
+            thearray = [[lowerH,lowerS,lowerV],[upperH, upperS,upperV]]
             print(thearray)
-            
-            # Also save this array as penval.npy
+ 
             np.save('setupObject',thearray)
             break
-        
-    # Close.    
+           
     cap.release()
     cv2.destroyAllWindows()
